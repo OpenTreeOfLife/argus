@@ -472,7 +472,7 @@ function setup() {
                 searchstr = arg[1];
             else if (arg[0] == "domsource") {
                 domsource = arg[1];
-                alert("domsource = " + domsource);
+//                alert("domsource = " + domsource);
             }
         }
     }
