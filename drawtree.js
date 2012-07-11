@@ -40,21 +40,9 @@ function buildJSONQuery(argsobj) {
      * 
      * '{"domsource":"ncbi","nubrelid":12345,"altrels":[123,124,125]}'
      * 
-     * ...this format at least works for the domsource arg... so far though it is
-     * not working for the nubrel arg.
-     * 
-     * Theoretically, we will call this function on each page load, and pass its
-     * return value (the JSON query string) to the loadData function, which will
-     * send it to the Neo4J REST service and collect the result to be displayed
-     * in the browser.
-     * 
-     * We will need to keep track of the list of preferred altrels so the 
-     * webservice can reuse the same list on each succesive query. This list may
-     * be returned by the webservice along with the actual tree data; on each
-     * succesive query we can just re-send the list back to the server. This will
-     * allow the server to modify the list as we go, since some previously chosen
-     * altrels may be overridden by subsequent user actions.
-     * 
+     * much of this is irrelevant at this point. currently the only part of this
+     * function in use is the domsource. it will be useful if/when we
+     * decide to make queries more complex
      * */
     
     var empty = true;
@@ -70,7 +58,6 @@ function buildJSONQuery(argsobj) {
     }
 
     if (typeof argsobj.altrelids != "undefined") {
-//        alert(argsobj.altrelids);
 
         if (empty) {
             var json = '{';
@@ -86,7 +73,6 @@ function buildJSONQuery(argsobj) {
                 json += ']';
             else
                 json += ',';
-//            alert(json);
         }
         previtem = true;
 	}
@@ -105,7 +91,6 @@ function buildJSONQuery(argsobj) {
     if (!empty)
         json += '}';
 
-//    alert(json);
 	return json;
 }
 
@@ -194,7 +179,7 @@ function drawNode(node, domsource, isfirst) {
                  * It can be removed here by putting in the following line, but if this line follows
                  * the loadData function then it will remove the current instead of the last paper
                  * object. It is not clear why the first paper object is not overwritten by later
-                 * assignments to that variable name, but the code seems to work alright. */
+                 * assignments to that variable name, but the code seems to work alright as is. */
                 paper.remove();
                 loadData(loadargs);
             };
@@ -485,8 +470,10 @@ function setup() {
             var arg = toks[i].split("=");
             if (arg[0] == "nodename")
                 searchstr = arg[1];
-            else if (arg[0] == "domsource")
+            else if (arg[0] == "domsource") {
                 domsource = arg[1];
+                alert("domsource = " + domsource);
+            }
         }
     }
 
@@ -497,9 +484,11 @@ function setup() {
         
         startnode = getNodeIdFromDb(searchstr);
         
+        var jsonquerystring = buildJSONQuery({"domsource": domsource});
+        
         if (!isBlank(startnode)) {           
             var url = buildUrl(startnode);
-            var loadargs = {"url": url, "method": "POST", "domsource": domsource};
+            var loadargs = {"url": url, "method": "POST", "jsonquerystring": jsonquerystring};
             loadData(loadargs);
         } else
             alert("No match found for '" + searchstr + "'");
@@ -534,7 +523,7 @@ function loadData(argsobj) {
     /* accepts three named arguments:
      *    url               the address to which the HTTP request is sent
      *    jsonquerystring   a json string containing query information
-     *    method            e.g. GET or POST */
+     *    method            e.g. GET or POST; POST is required for queries to the Neo4J REST service*/
 
     var url = argsobj.url;
     var jsonquerystring = argsobj.jsonquerystring;
@@ -561,9 +550,6 @@ function loadData(argsobj) {
     var pwidth = nodewidth*(treedata[0].maxnodedepth+1) + 1.5*tipoffset + xlabelmargin;
     xoffset = pwidth - nodewidth - tipoffset;
     
-    // store altrels from the array passed to us by the REST service
-//    paper.altrels = typeof query == "undefined" ? new Array() : query;
-
     var domsource = treedata[1].domsource;
     paper = Raphael(10, 10, 10, 10);
     paper.setSize(pwidth, pheight);
