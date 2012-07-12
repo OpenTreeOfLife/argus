@@ -174,34 +174,32 @@ function drawNode(node, domsource, isfirst) {
     }
 
     function getClickHandlerNode() {
-    var thisnode = node;
-//            var domsource = "ncbi";
-//            var url =  buildUrl(thisNode.nodeid,paper.altrels);
-    return function() {
-        paper.clear();
-        
-/* at some point we will probably want to retain a history of preferred alt relationships, etc.
-* these should be stored/retrieved from a base-level query info object that is passed back
-* and forth from the server. for now we are just keeping things simple and not remembering
-* anything about previous relationships.
-*                  var altrelids = new Array(); */
+        var thisnode = node;
+        return function() {
+            paper.clear();
+            
+    /* at some point we will probably want to retain a history of preferred alt relationships, etc.
+    * these should be stored/retrieved from a base-level query info object that is passed back
+    * and forth from the server. for now we are just keeping things simple and not remembering
+    * anything about previous relationships.
+    *                  var altrelids = new Array(); */
 
-        var focalnodeid = thisnode.nodeid;
-//                var domsource = thisnode.source;
-        var jsonargs = {"domsource": domsource};           
+            var focalnodeid = thisnode.nodeid;
+    //                var domsource = thisnode.source;
+            var jsonargs = {"domsource": domsource};           
 
-        var loadargs = {"url": buildUrl(focalnodeid),
-                        "method": "POST",
-                        "jsonquerystring": buildJSONQuery(jsonargs)};
+            var loadargs = {"url": buildUrl(focalnodeid),
+                            "method": "POST",
+                            "jsonquerystring": buildJSONQuery(jsonargs)};
 
-        /* This is weird... Despite the paper object being declared in the global scope,
-         * we end up with a duplicated paper object from the first query to the database.
-         * It can be removed here by putting in the following line, but if this line follows
-         * the loadData function then it will remove the current instead of the last paper
-         * object. It is not clear why the first paper object is not overwritten by later
-         * assignments to that variable name, but the code seems to work alright as is. */
-        paper.remove();
-        loadData(loadargs);};
+            /* This is weird... Despite the paper object being declared in the global scope,
+             * we end up with a duplicated paper object from the first query to the database.
+             * It can be removed here by putting in the following line, but if this line follows
+             * the loadData function then it will remove the current instead of the last paper
+             * object. It is not clear why the first paper object is not overwritten by later
+             * assignments to that variable name, but the code seems to work alright as is. */
+            paper.remove();
+            loadData(loadargs);};
     }
 
     circle.click(getClickHandlerNode());
@@ -217,6 +215,37 @@ function drawNode(node, domsource, isfirst) {
 }
 
 function drawCycles(focalnode) {
+
+    var altrelsset = paper.set();
+    altrelsset.hidden = false;
+
+    function toggleAltRels() {
+        var altrels = altrelsset;
+        return function() {
+            
+            if (altrels.hidden == true) {
+                altrels.show();
+                altrels.hidden = false;
+            } else {
+                altrels.hide();
+                altrels.hidden = true;
+            }
+        }
+    }
+    
+    tx = 10;
+    ty = 30;
+    var togglebox = paper.rect(tx, ty, nodewidth, nodeheight * 2)
+        .attr({"stroke": "black","stroke-width": "1px", "fill": "white"})
+        .click(toggleAltRels());
+    var togglelabel = paper.text(tx + r, ty + nodeheight*0.95, "toggle alt rels")
+        .attr({'text-anchor': 'start',"font-size": r*fontscalar});
+
+    var body = $("body");
+    $(window).bind("scroll",function() {
+        togglebox.animate({"y": body.scrollTop() + ty},0);
+        togglelabel.animate({"y": body.scrollTop() + ty + nodeheight},0);
+    });
 
     // for each node found to have more than one parent
     for (var i = 0; i < nodeswithcycles.length; i++) {
@@ -264,6 +293,8 @@ function drawCycles(focalnode) {
                     var dst2 = "M" + x1 + " " + y2 + "L" + px + " " + py;
                     var dln1 = paper.path(dst1).attr({"stroke": altrelcolor});
                     var dln2 = paper.path(dst2).attr({"stroke": altrelcolor});
+                    altrelsset.push(dln1);
+                    altrelsset.push(dln2);
 
                     // main vertical line
                     var sst = "M" + x1 + " " + y1 + "L" + x1 + " " + y2;
@@ -274,7 +305,8 @@ function drawCycles(focalnode) {
                     var dln = "M" + cx + " " + cy + "L" + px + " " + py;
                     var altrelline = paper.path(dln).attr({"stroke":altrelcolor});
                 }
-                
+                altrelsset.push(altrelline);                
+
                 var bw = 60;
                 var bh = nodeheight;
                 
@@ -296,7 +328,7 @@ function drawCycles(focalnode) {
  *                  var altrelids = // get altrels ;
  *                  altrelids.push(child.altrels[j].altrelid); */
                     
-                    var focalnodeid = child.altrels[j].parentid; // inherit this, passed to parent function
+                    var focalnodeid = child.altrels[j].parentid;
 //                    var domsource = child.altrels[j].source;
 
                     var jsonargs = {"domsource": child.altrels[j].source};
