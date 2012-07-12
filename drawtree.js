@@ -117,6 +117,14 @@ function drawNode(node, domsource, isfirst) {
         var label = paper.text(node.x + xlabelmargin, node.y, node.name).
             attr({'text-anchor': 'start',"font-size":r*fontscalar});
 
+        // create closure to access node attributes when hovering in/out
+        function getHoverHandlerNode(attributes) {
+            var nodeCircle = circle;
+            return function() {nodeCircle.attr(attributes);};
+        }
+
+        circle.hover(getHoverHandlerNode({"fill": tiphovercolor}),getHoverHandlerNode({"fill": tipcolor}));
+
         curleaf++;
 
     // if the node has children then it is internal
@@ -153,42 +161,9 @@ function drawNode(node, domsource, isfirst) {
             return function() {nodeCircle.attr(attributes);};
         }
         
-        function getClickHandlerNode() {
-            var thisnode = node;
-//            var domsource = "ncbi";
-//            var url =  buildUrl(thisNode.nodeid,paper.altrels);
-            return function() {
-                paper.clear();
-                
-/* at some point we will probably want to retain a history of preferred alt relationships, etc.
- * these should be stored/retrieved from a base-level query info object that is passed back
- * and forth from the server. for now we are just keeping things simple and not remembering
- * anything about previous relationships.
- *                  var altrelids = new Array(); */
-
-                var focalnodeid = thisnode.nodeid;
-//                var domsource = thisnode.source;
-                var jsonargs = {"domsource": domsource};           
-
-                var loadargs = {"url": buildUrl(focalnodeid),
-                                "method": "POST",
-                                "jsonquerystring": buildJSONQuery(jsonargs)};
-
-                /* This is weird... Despite the paper object being declared in the global scope,
-                 * we end up with a duplicated paper object from the first query to the database.
-                 * It can be removed here by putting in the following line, but if this line follows
-                 * the loadData function then it will remove the current instead of the last paper
-                 * object. It is not clear why the first paper object is not overwritten by later
-                 * assignments to that variable name, but the code seems to work alright as is. */
-                paper.remove();
-                loadData(loadargs);
-            };
-        }
+        // assign hover behaviors
+        circle.hover(getHoverHandlerNode({"fill": nodehovercolor}),getHoverHandlerNode({"fill": nodecolor}));
         
-        // assign behaviors
-        circle.hover(getHoverHandlerNode({"fill": nodehovercolor}),getHoverHandlerNode({"fill": nodecolor}))
-            .click(getClickHandlerNode());
-
         // draw branches (square tree)
         var spine_st = "M" + node.x + " " + node.children[0].y + "L" + node.x + " " + node.children[nchildren-1].y;
         var spine = paper.path(spine_st).toBack();
@@ -197,6 +172,39 @@ function drawNode(node, domsource, isfirst) {
             var branch = paper.path(branch_st).toBack();
         }
     }
+
+    function getClickHandlerNode() {
+    var thisnode = node;
+//            var domsource = "ncbi";
+//            var url =  buildUrl(thisNode.nodeid,paper.altrels);
+    return function() {
+        paper.clear();
+        
+/* at some point we will probably want to retain a history of preferred alt relationships, etc.
+* these should be stored/retrieved from a base-level query info object that is passed back
+* and forth from the server. for now we are just keeping things simple and not remembering
+* anything about previous relationships.
+*                  var altrelids = new Array(); */
+
+        var focalnodeid = thisnode.nodeid;
+//                var domsource = thisnode.source;
+        var jsonargs = {"domsource": domsource};           
+
+        var loadargs = {"url": buildUrl(focalnodeid),
+                        "method": "POST",
+                        "jsonquerystring": buildJSONQuery(jsonargs)};
+
+        /* This is weird... Despite the paper object being declared in the global scope,
+         * we end up with a duplicated paper object from the first query to the database.
+         * It can be removed here by putting in the following line, but if this line follows
+         * the loadData function then it will remove the current instead of the last paper
+         * object. It is not clear why the first paper object is not overwritten by later
+         * assignments to that variable name, but the code seems to work alright as is. */
+        paper.remove();
+        loadData(loadargs);};
+    }
+
+    circle.click(getClickHandlerNode());
 
     // if this node has cycles, record it; we will draw them once the tree is done
     var naltparents = (typeof node.altrels == "undefined" ? 0 : node.altrels.length);
@@ -453,6 +461,7 @@ var yoffset;
 var nodecolor = "#8af";
 var nodehovercolor = "#bdf";
 var tipcolor = "#14d";
+var tiphovercolor = "#b8f";
 var altrelcolor = "#f00";
 var altpcolor = "#c69";
 var altplinkcolor = "#900";
