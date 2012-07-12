@@ -235,12 +235,13 @@ function drawCycles(focalnode) {
     
     tx = 10;
     ty = 30;
-    var togglebox = paper.rect(tx, ty, nodewidth, nodeheight * 2)
-        .attr({"stroke": "black","stroke-width": "1px", "fill": "white"})
-        .click(toggleAltRels());
     var togglelabel = paper.text(tx + r, ty + nodeheight*0.95, "toggle alt rels")
         .attr({'text-anchor': 'start',"font-size": r*fontscalar});
 
+    var togglebox = paper.rect(tx, ty, nodewidth, nodeheight * 2)
+        .attr({"stroke": "black","stroke-width": "1px", "fill": "white","fill-opacity": 0})
+        .click(toggleAltRels());
+        
     var body = $("body");
     $(window).bind("scroll",function() {
         togglebox.animate({"y": body.scrollTop() + ty},0);
