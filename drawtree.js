@@ -374,7 +374,7 @@ function drawCycles(focalnode) {
             var infobox = paper.set();
             infobox.x = nub.x - (nodewidth+(xlabelmargin*2));
             infobox.y = nub.y;
-            infobox.w = nodewidth+(xlabelmargin*2);
+            infobox.w = nodewidth*2+(xlabelmargin*2);
             infobox.h = nodeheight * (nub.nodes.length + 1);
 
             // draw the info box container
@@ -386,7 +386,7 @@ function drawCycles(focalnode) {
             for (var j = 0; j < nub.nodes.length; j++) {
                 
                 // the link labels are the names of the corresponding sources
-                linktext = nub.nodes[j].source + "\n";
+                linktext = nub.nodes[j].parentname + " > " + nub.nodes[j].source;
 
                 // create closure so we can access nub.nodes[j] when we click a source link
                 function getClickHandlerNubRelLink() {
@@ -401,12 +401,14 @@ function drawCycles(focalnode) {
                     var domsource = nub.nodes[j].source;
 
                     var jsonargs = {"domsource": domsource}; 
+                    var jsonquerystr = buildJSONQuery(jsonargs);
 
                     return function() {
                         paper.clear();
                         var loadargs = {"url": buildUrl(focalnodeid),
                                         "method": "POST",
-                                        "jsonquerystring": buildJSONQuery(jsonargs)};
+                                        "jsonquerystring": jsonquerystr};
+                        alert(jsonquerystr);
                         paper.remove();
                         loadData(loadargs);};
                 }
@@ -423,8 +425,8 @@ function drawCycles(focalnode) {
                 }
                 
                 // assign hover behavior
-                thislink.hover(getNubLinkHoverHandler({"fill": altplinkcolor, "font-weight": "bold"}),
-                        getNubLinkHoverHandler({"fill": "black", "font-weight": "normal"}));
+                thislink.hover(getNubLinkHoverHandler({"fill": altplinkcolor}),
+                        getNubLinkHoverHandler({"fill": "black"}));
                 
                 nublinks.push(thislink);
             }
@@ -523,7 +525,7 @@ function setup() {
 
     if (!isBlank(searchstr)) {
         
-        startnode = getNodeIdFromDb(searchstr);
+        startnode = getNodeIdForName(searchstr);
         
         var jsonquerystring = buildJSONQuery({"domsource": domsource});
         
@@ -536,7 +538,7 @@ function setup() {
     }
 }
 
-function getNodeIdFromDb(searchstr) {
+function getNodeIdForName(searchstr) {
     
 	var url = "http://opentree-dev.bio.ku.edu:7474/db/data/ext/GetJsons/graphdb/getNodeIDJSONFromName";
 
@@ -567,7 +569,7 @@ function loadData(argsobj) {
      *    method            e.g. GET or POST; POST is required for queries to the Neo4J REST service*/
 
     var url = argsobj.url;
-    var jsonquerystring = argsobj.jsonquerystring;
+    var jsonquerystr = argsobj.jsonquerystring;
     var method = argsobj.method;
 
     var xobjPost = new XMLHttpRequest();
@@ -580,10 +582,11 @@ function loadData(argsobj) {
      * XMLHttpRequest.SetRequestHeader() before we issue the send. */
     xobjPost.setRequestHeader("Content-Type","application/json");
    
-    jsonquerystring = jsonquerystring == "" ? undefined : jsonquerystring;
-    xobjPost.send(jsonquerystring);
+    jsonquerystr = jsonquerystr == "" ? undefined : jsonquerystr;
+    xobjPost.send(jsonquerystr);
 
-    var jsonrespstring = xobjPost.responseText;
+    var jsonrespstr = xobjPost.responseText;
+//    alert(jsonrespstr);
     var treedata = JSON.parse(eval(xobjPost.responseText));
 
     // calculate view-specific geometry parameters
