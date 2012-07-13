@@ -222,7 +222,6 @@ function drawCycles(focalnode) {
     function toggleAltRels() {
         var altrels = altrelsset;
         return function() {
-            
             if (altrels.hidden == true) {
                 altrels.show();
                 altrels.hidden = false;
@@ -244,8 +243,8 @@ function drawCycles(focalnode) {
         
     var body = $("body");
     $(window).bind("scroll",function() {
-        togglebox.animate({"y": body.scrollTop() + ty},0);
-        togglelabel.animate({"y": body.scrollTop() + ty + nodeheight},0);
+        togglebox.animate({"y": body.scrollTop() + ty},200);
+        togglelabel.animate({"y": body.scrollTop() + ty + nodeheight},200);
     });
 
     // for each node found to have more than one parent
@@ -347,7 +346,7 @@ function drawCycles(focalnode) {
                 function getHoverHandlerAltRelLineShow(attributes) {
                     var linetomodify = altrelline;
                     var label = altrellabel;
-                    return function() {linetomodify.attr(attributes); label.show();};
+                    return function() {linetomodify.attr(attributes); label.show().toFront();};
                 }
                 function getHoverHandlerAltRelLineHide(attributes) {
                     var linetomodify = altrelline;
