@@ -372,7 +372,7 @@ function drawCycles(focalnode) {
 
             // calc geometry for the nub info box, which contains links to alt topologies
             var infobox = paper.set();
-            infobox.x = nub.x - (nodewidth+(xlabelmargin*2));
+            infobox.x = nub.x - (nodewidth*2+(xlabelmargin*2));
             infobox.y = nub.y;
             infobox.w = nodewidth*2+(xlabelmargin*2);
             infobox.h = nodeheight * (nub.nodes.length + 1);
@@ -590,7 +590,7 @@ function loadData(argsobj) {
     var treedata = JSON.parse(eval(xobjPost.responseText));
 
     // calculate view-specific geometry parameters
-    var pheight = ((2*r) + ynodemargin) * (treedata[0].nleaves) + (nubdistscalar * r) + (3*nodeheight);
+    var pheight = ((2*r) + ynodemargin) * (treedata[0].nleaves) + (nubdistscalar * r) + (40*nodeheight);
     var pwidth = nodewidth*(treedata[0].maxnodedepth+1) + 1.5*tipoffset + xlabelmargin;
     xoffset = pwidth - nodewidth - tipoffset;
     
