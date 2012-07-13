@@ -408,7 +408,7 @@ function drawCycles(focalnode) {
                         var loadargs = {"url": buildUrl(focalnodeid),
                                         "method": "POST",
                                         "jsonquerystring": jsonquerystr};
-                        alert(jsonquerystr);
+//                        alert(jsonquerystr);
                         paper.remove();
                         loadData(loadargs);};
                 }
