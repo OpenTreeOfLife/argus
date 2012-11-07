@@ -1,18 +1,23 @@
 <html>
-<head>
-<title>Node start point select form</title>
-</head>
-<body>
+  <head>
+    <title>Node start point select form</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <!-- gh-pages repo doesn't contain scripts, must reference them with absolute urls  -->
+    <script src="https://raw.github.com/OpenTreeOfLife/argus/master/jquery-1.7.2.min.js"></script>
+    <script src="https://raw.github.com/OpenTreeOfLife/argus/master/loadtaxdata.js"></script>
+    <link rel="stylesheet" type="text/css" href="format.css" />
 
-<FORM METHOD="LINK" ACTION="http://opentreeoflife.github.com/argus/browser.html">
-    <p>Enter a taxonomic name: <input name="nodename">
-    <select name="domsource">
-        <option selected="selected">ottol</option>
-        <option>preottol</option>
-	<option>ncbi</option>
-    </select></p>
-<input type="submit" value="Get tree">
-</FORM>
+    <!-- call tnrs loader function in loadtaxdata.js -->
+    <script>$(document).ready(setup());</script>
 
-</body>
+  </head>
+  <body>
+
+    <form method="LINK" action="index.html" id="nameSearch">
+      <p>Search for a preferred taxonomic name: <input name="nodename">
+      <input type="submit" value="Find names">
+    </form>
+
+  </body>
 </html>
