@@ -511,8 +511,8 @@ function setup() {
         var toks = String(tokstr).split("&");
         for (var i=0; i<toks.length; i++) {
             var arg = toks[i].split("=");
-            if (arg[0] == "nodename")
-                searchstr = arg[1];
+            if (arg[0] == "nodeid")
+                nodeid = arg[1];
             else if (arg[0] == "domsource") {
                 domsource = arg[1];
 //                alert("domsource = " + domsource);
@@ -521,23 +521,24 @@ function setup() {
     }
 
     if (isBlank(domsource))
-        domsource = "ncbi";
+        domsource = "ottol";
 
-    if (!isBlank(searchstr)) {
+    if (!isBlank(nodeid)) {
         
-        startnode = getNodeIdForName(searchstr);
-        
-        var jsonquerystring = buildJSONQuery({"domsource": domsource});
-        
-        if (!isBlank(startnode)) {           
-            var url = buildUrl(startnode);
-            var loadargs = {"url": url, "method": "POST", "jsonquerystring": jsonquerystring};
-            loadData(loadargs);
-        } else
-            alert("No match found for '" + searchstr + "'");
+//        startnode = getNodeIdForName(searchstr);
+
+    var jsonquerystring = buildJSONQuery({"domsource": domsource});
+
+//        if (!isBlank(nodeid)) {           
+    var url = buildUrl(nodeid);
+    var loadargs = {"url": url, "method": "POST", "jsonquerystring": jsonquerystring};
+    alert(url);
+    loadData(loadargs);
+//        } else
+//            alert("No match found for '" + searchstr + "'");
     }
 }
-
+/*
 function getNodeIdForName(searchstr) {
     
 	var url = "http://opentree-dev.bio.ku.edu:7474/db/data/ext/GetJsons/graphdb/getNodeIDJSONFromName";
@@ -558,7 +559,7 @@ function getNodeIdForName(searchstr) {
 
     return nodeid;
     
-}
+} */
 
 // this function queries the db and draws the resulting tree
 function loadData(argsobj) {
