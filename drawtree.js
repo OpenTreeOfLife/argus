@@ -503,7 +503,7 @@ var altplinkcolor = "#900";
 // call this function on first page load to get initial tree
 function setup() {
 
-    // get json from server
+    // extract variables from url string
     var searchstr = "";
     var domsource = "";
     if (location.search != "") {
@@ -515,7 +515,6 @@ function setup() {
                 nodeid = arg[1];
             else if (arg[0] == "domsource") {
                 domsource = arg[1];
-//                alert("domsource = " + domsource);
             }
         }
     }
@@ -523,43 +522,14 @@ function setup() {
     if (isBlank(domsource))
         domsource = "ottol";
 
+    // call webservice to display graph for indicated node id
     if (!isBlank(nodeid)) {
-        
-//        startnode = getNodeIdForName(searchstr);
-
-    var jsonquerystring = buildJSONQuery({"domsource": domsource});
-
-//        if (!isBlank(nodeid)) {           
-    var url = buildUrl(nodeid);
-    var loadargs = {"url": url, "method": "POST", "jsonquerystring": jsonquerystring};
-    alert(url);
-    loadData(loadargs);
-//        } else
-//            alert("No match found for '" + searchstr + "'");
+        var jsonquerystring = buildJSONQuery({"domsource": domsource});
+        var url = buildUrl(nodeid);
+        var loadargs = {"url": url, "method": "POST", "jsonquerystring": jsonquerystring};
+        loadData(loadargs);
     }
 }
-/*
-function getNodeIdForName(searchstr) {
-    
-	var url = "http://opentree-dev.bio.ku.edu:7474/db/data/ext/GetJsons/graphdb/getNodeIDJSONFromName";
-
-    var jsonquerystring = '{"nodename":"' + searchstr + '"}';
-//    alert(jsonquerystring);
-    var method = "POST";
-
-    var xobj = new XMLHttpRequest();
-    xobj.open(method, url, false);
-    xobj.setRequestHeader("Accept", "");
-    xobj.setRequestHeader("Content-Type","application/json");
-    xobj.send(jsonquerystring);
-   
-    var jsonrespstr = xobj.responseText;
-    var respdata = JSON.parse(eval(jsonrespstr));
-    nodeid = respdata[0].nodeid;
-
-    return nodeid;
-    
-} */
 
 // this function queries the db and draws the resulting tree
 function loadData(argsobj) {
