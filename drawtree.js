@@ -26,8 +26,8 @@ function isBlank(str) {
 }
 
 function buildUrl(focalclade) { 
-	//var address = "http://localhost:7474"
-	var address = "http://opentree-dev.bio.ku.edu:7474"
+	var address = "http://localhost:7474"
+	//var address = "http://opentree-dev.bio.ku.edu:7474"
     var prefix = address+"/db/data/ext/GetJsons/node/";
     var suffix = "/getConflictTaxJsonAltRel";
     var url = prefix + focalclade + suffix; 
@@ -527,10 +527,15 @@ function setup() {
         
         startnode = getNodeIdForName(searchstr);
         
+//        alert(startnode);
+        
         var jsonquerystring = buildJSONQuery({"domsource": domsource});
+        
+//        alert(jsonquerystring);
         
         if (!isBlank(startnode)) {           
             var url = buildUrl(startnode);
+//            alert(url);
             var loadargs = {"url": url, "method": "POST", "jsonquerystring": jsonquerystring};
             loadData(loadargs);
         } else
@@ -540,7 +545,8 @@ function setup() {
 
 function getNodeIdForName(searchstr) {
     
-	var url = "http://opentree-dev.bio.ku.edu:7474/db/data/ext/GetJsons/graphdb/getNodeIDJSONFromName";
+//	var url = "http://opentree-dev.bio.ku.edu:7474/db/data/ext/GetJsons/graphdb/getNodeIDJSONFromName";
+	var url = "http://localhost:7474/db/data/ext/GetJsons/graphdb/getNodeIDJSONFromName";
 
     var jsonquerystring = '{"nodename":"' + searchstr + '"}';
 //    alert(jsonquerystring);
@@ -553,8 +559,10 @@ function getNodeIdForName(searchstr) {
     xobj.send(jsonquerystring);
    
     var jsonrespstr = xobj.responseText;
-    var respdata = JSON.parse(eval(jsonrespstr));
-    nodeid = respdata[0].nodeid;
+    alert(jsonrespstr);
+    var respdata = JSON.parse(jsonrespstr);
+    alert(respdata.nodeid);
+    nodeid = parseInt(respdata.nodeid);
 
     return nodeid;
     
