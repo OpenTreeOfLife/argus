@@ -503,33 +503,61 @@ var altplinkcolor = "#900";
 // call this function on first page load to get initial tree
 function setup() {
 
-    // parse variables out of url
-    var nodeid = "";
+    // get json from server
+    var searchstr = "";
     var domsource = "";
     if (location.search != "") {
         var tokstr = location.search.substr(1).split("?");
         var toks = String(tokstr).split("&");
         for (var i=0; i<toks.length; i++) {
             var arg = toks[i].split("=");
-            if (arg[0] == "nodeid")
-                nodeid = arg[1];
+            if (arg[0] == "nodename")
+                searchstr = arg[1];
             else if (arg[0] == "domsource") {
                 domsource = arg[1];
+//                alert("domsource = " + domsource);
             }
         }
     }
 
     if (isBlank(domsource))
-        domsource = "ottol";
+        domsource = "ncbi";
 
-    // process the request for the json
-    if (!isBlank(nodeid)) {
+    if (!isBlank(searchstr)) {
+        
+        startnode = getNodeIdForName(searchstr);
+        
         var jsonquerystring = buildJSONQuery({"domsource": domsource});
-        var url = buildUrl(nodeid);
-
-        var loadargs = {"url": url, "method": "POST", "jsonquerystring": jsonquerystring};
-        loadData(loadargs);
+        
+        if (!isBlank(startnode)) {           
+            var url = buildUrl(startnode);
+            var loadargs = {"url": url, "method": "POST", "jsonquerystring": jsonquerystring};
+            loadData(loadargs);
+        } else
+            alert("No match found for '" + searchstr + "'");
     }
+}
+
+function getNodeIdForName(searchstr) {
+    
+	var url = "http://opentree-dev.bio.ku.edu:7474/db/data/ext/GetJsons/graphdb/getNodeIDJSONFromName";
+
+    var jsonquerystring = '{"nodename":"' + searchstr + '"}';
+//    alert(jsonquerystring);
+    var method = "POST";
+
+    var xobj = new XMLHttpRequest();
+    xobj.open(method, url, false);
+    xobj.setRequestHeader("Accept", "");
+    xobj.setRequestHeader("Content-Type","application/json");
+    xobj.send(jsonquerystring);
+   
+    var jsonrespstr = xobj.responseText;
+    var respdata = JSON.parse(eval(jsonrespstr));
+    nodeid = respdata[0].nodeid;
+
+    return nodeid;
+    
 }
 
 // this function queries the db and draws the resulting tree
@@ -558,6 +586,7 @@ function loadData(argsobj) {
     xobjPost.send(jsonquerystr);
 
     var jsonrespstr = xobjPost.responseText;
+//    alert(jsonrespstr);
     var treedata = JSON.parse(eval(xobjPost.responseText));
 
     // calculate view-specific geometry parameters
