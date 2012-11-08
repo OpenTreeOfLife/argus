@@ -33,6 +33,7 @@ function loadTaxData(searchStr) {
 
     // format the query to be sent to the tnrs
     var jsonquerystring = '{"queryString":"' + decodeURIComponent(searchStr).replace("+", " ") + '"}';
+alert(jsonquerystring);
     var method = "POST";
     var xobj = new XMLHttpRequest();
 
