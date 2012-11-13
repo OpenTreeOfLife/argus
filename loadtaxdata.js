@@ -11,7 +11,8 @@ function roundDecimal(value, precision) {
 function setup() {
 
     // attempt to get queried name from url string
-    var searchstr = "";
+    var searchStr = "";
+    var treeStr = "";
     var domsource = "";
     if (location.search != "") {
         var tokstr = location.search.substr(1).split("?");
@@ -24,12 +25,12 @@ function setup() {
         }
     }
 
-    // run the tnrs query on the string 
+    // run the tnrs query on the string or the tree
     if (searchstr != "")
-        loadTaxData(searchstr);
+        doNameRequest(searchstr);
 }
 
-function loadTaxData(searchStr) {
+function doNameRequest(searchStr) {
 
     // format the query to be sent to the tnrs
     var jsonquerystring = '{"queryString":"' + decodeURIComponent(searchStr).replace("+", " ") + '"}';
@@ -47,11 +48,11 @@ function loadTaxData(searchStr) {
     var respData = JSON.parse(jsonRespStr);
 
     // make the form that holds the tnrs results
-    makeForm(respData);
+    makeNamesForm(respData);
 
 }
 
-function makeForm(respData) {
+function makeNamesForm(respData) {
 
     // necessary wrapper: wait for page to load
     $(document).ready( function(){
