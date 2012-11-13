@@ -1,23 +1,30 @@
 <html>
-  <head>
-    <title>Node start point select form</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <!-- gh-pages repo doesn't contain scripts, must reference them with absolute urls  -->
-    <script src="https://raw.github.com/OpenTreeOfLife/argus/master/jquery-1.7.2.min.js"></script>
-    <script src="https://raw.github.com/OpenTreeOfLife/argus/master/loadtaxdata.js"></script>
-    <link rel="stylesheet" type="text/css" href="format.css" />
+<head>
+<title>Node start point select form</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--script src="jquery-1.7.2.min.js"></script>
+<script src="loadtaxdata.js"></script>
+<script>
+    $(document).ready(setup());
+</script-->
+<script src="loadtreedata.js"></script>
+<link rel="stylesheet" type="text/css" href="format.css" />
+</head>
+<body>
 
-    <!-- call tnrs loader function in loadtaxdata.js -->
-    <script>$(document).ready(setup());</script>
+<form method="LINK" action="nameresults.html">
+    <p id="nameSearch">
+        Search for taxonomic names (separate names with commas):<br/>
+        <input name="nodename"><input type="submit" value="Find names">
+    </p>
+</form>
+<form method="POST" action=>
+    <p id="treeSearch">
+        Enter a tree string to perform TNRS name-matching on its tips:<br/>
+        <textarea cols=60 rows=5 name="treeString"></textarea><br/>
+        <input type="submit" value="Match tip names" onClick="loadTreeData(this.form)">
+    </p>
+</form>
 
-  </head>
-  <body>
-
-    <form method="LINK" action="index.html" id="nameSearch">
-      <p>Search for a preferred taxonomic name: <input name="nodename">
-      <input type="submit" value="Find names">
-    </form>
-
-  </body>
+</body>
 </html>
