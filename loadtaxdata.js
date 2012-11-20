@@ -33,7 +33,8 @@ function setup() {
 function doNameRequest(searchStr) {
 
     // format the query to be sent to the tnrs
-    var jsonquerystring = '{"queryString":"' + decodeURIComponent(searchStr).replace("+", " ") + '"}';
+//  var jsonquerystring = '{"queryString":"' + decodeURIComponent(searchStr).replace("+", " ") + '"}';
+    var jsonquerystring = '{"queryString":"' + decodeURIComponent(searchStr).replace(/\++/g, " ") + '"}';
     var method = "POST";
     var xobj = new XMLHttpRequest();
 
