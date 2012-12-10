@@ -1,6 +1,6 @@
 // the location of the TNRS query service
-//url = "http://localhost:7474/db/data/ext/TNRS/graphdb/doTNRSForNames";
-url = "http://opentree-dev.bio.ku.edu:7474/db/data/ext/TNRS/graphdb/doTNRSForNames";
+url = "http://localhost:7474/db/data/ext/TNRS/graphdb/doTNRSForNames";
+//url = "http://opentree-dev.bio.ku.edu:7474/db/data/ext/TNRS/graphdb/doTNRSForNames";
 
 function roundDecimal(value, precision) {
     var t = Math.pow(10,precision);
