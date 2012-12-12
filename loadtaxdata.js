@@ -1,6 +1,6 @@
 // the location of the TNRS query service
-url = "http://localhost:7474/db/data/ext/TNRS/graphdb/doTNRSForNames";
-//url = "http://opentree-dev.bio.ku.edu:7474/db/data/ext/TNRS/graphdb/doTNRSForNames";
+//url = "http://localhost:7474/db/data/ext/TNRS/graphdb/doTNRSForNames";
+url = "http://opentree-dev.bio.ku.edu:7474/db/data/ext/TNRS/graphdb/doTNRSForNames";
 
 function roundDecimal(value, precision) {
     var t = Math.pow(10,precision);
@@ -8,10 +8,15 @@ function roundDecimal(value, precision) {
 	return result;
 }
 
+function cleanString(string) {
+    return decodeURIComponent(string).replace(/\++/g, " ");
+}
+
 function setup() {
 
     // attempt to get queried name from url string
     var searchStr = "";
+    var contextName = "";
     var treeStr = "";
     var domsource = "";
     if (location.search != "") {
@@ -20,21 +25,24 @@ function setup() {
         for (var i=0; i<toks.length; i++) {
             var arg = toks[i].split("=");
 
-            if (arg[0] == "nodename")
-                searchstr = arg[1];
+            if (arg[0] == "nodeName")
+                searchStr = cleanString(arg[1]);
+            else if (arg[0] == "contextName")
+                contextName = cleanString(arg[1]);
         }
     }
 
     // run the tnrs query on the string or the tree
-    if (searchstr != "")
-        doNameRequest(searchstr);
+    if (searchStr != "")
+        doNameRequest(searchStr, contextName);
 }
 
-function doNameRequest(searchStr) {
+function doNameRequest(searchStr, contextName) {
 
     // format the query to be sent to the tnrs
 //  var jsonquerystring = '{"queryString":"' + decodeURIComponent(searchStr).replace("+", " ") + '"}';
-    var jsonquerystring = '{"queryString":"' + decodeURIComponent(searchStr).replace(/\++/g, " ") + '"}';
+    var jsonquerystring = '{"queryString":"' + searchStr + '", "contextName":"' + contextName + '"}';
+//    alert(jsonquerystring);
     var method = "POST";
     var xobj = new XMLHttpRequest();
 
@@ -84,7 +92,7 @@ function makeNamesForm(respData) {
 
                 var matchForm = $("<form method='LINK' action='browser.html'></form>").append("<input type='hidden' name='domsource' value='ottol' />").append("<input type='hidden' name='nodeid' value='"+thisMatch.matchedNodeId+"' />").append("<input type='submit' value='View'>");
                 
-                thisMatchResult.append(matchForm).append("<span class='matchname'>"+thisMatch.matchedNodeName+"</span>").append("<span>"+thisMatch.nomenCode+"</span>").append("<span>"+roundDecimal(thisMatch.score,3)+"</span>");
+                thisMatchResult.append(matchForm).append("<span class='matchname'>"+thisMatch.matchedName+"</span>").append("<span>"+thisMatch.nomenCode+"</span>").append("<span>"+roundDecimal(thisMatch.score,3)+"</span>");
 
                 $(nameResult).append(thisMatchResult);
                 
