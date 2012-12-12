@@ -26,11 +26,7 @@ function isBlank(str) {
 }
 
 function buildUrl(focalclade) { 
-<<<<<<< HEAD
-//    var address = "http://localhost:7474"
-=======
     //var address = "http://localhost:7474"
->>>>>>> 1e391d4e01ce0f3c2e33ac563362e57c5ca9817b
     var address = "http://opentree-dev.bio.ku.edu:7474"
     var prefix = address+"/db/data/ext/GetJsons/node/";
     var suffix = "/getConflictTaxJsonAltRel";
@@ -544,10 +540,7 @@ function loadData(argsobj) {
      *    method            e.g. GET or POST; POST is required for queries to the Neo4J REST service*/
 
     var url = argsobj.url;
-<<<<<<< HEAD
 //    alert(url);
-=======
->>>>>>> 1e391d4e01ce0f3c2e33ac563362e57c5ca9817b
     var jsonquerystr = argsobj.jsonquerystring;
     var method = argsobj.method;
 
