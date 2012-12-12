@@ -8,43 +8,31 @@ function roundDecimal(value, precision) {
 	return result;
 }
 
-<<<<<<< HEAD
 function cleanString(string) {
     return decodeURIComponent(string).replace(/\++/g, " ");
 }
 
-=======
->>>>>>> 1e391d4e01ce0f3c2e33ac563362e57c5ca9817b
 function setup() {
 
     // attempt to get queried name from url string
     var searchStr = "";
-<<<<<<< HEAD
     var contextName = "";
-=======
->>>>>>> 1e391d4e01ce0f3c2e33ac563362e57c5ca9817b
-    var treeStr = "";
-    var domsource = "";
+//    var treeStr = "";
+//    var domsource = "";
     if (location.search != "") {
         var tokstr = location.search.substr(1).split("?");
         var toks = String(tokstr).split("&");
         for (var i=0; i<toks.length; i++) {
             var arg = toks[i].split("=");
 
-<<<<<<< HEAD
             if (arg[0] == "nodeName")
                 searchStr = cleanString(arg[1]);
             else if (arg[0] == "contextName")
                 contextName = cleanString(arg[1]);
-=======
-            if (arg[0] == "nodename")
-                searchstr = arg[1];
->>>>>>> 1e391d4e01ce0f3c2e33ac563362e57c5ca9817b
         }
     }
 
     // run the tnrs query on the string or the tree
-<<<<<<< HEAD
     if (searchStr != "")
         doNameRequest(searchStr, contextName);
 }
@@ -55,17 +43,6 @@ function doNameRequest(searchStr, contextName) {
 //  var jsonquerystring = '{"queryString":"' + decodeURIComponent(searchStr).replace("+", " ") + '"}';
     var jsonquerystring = '{"queryString":"' + searchStr + '", "contextName":"' + contextName + '"}';
 //    alert(jsonquerystring);
-=======
-    if (searchstr != "")
-        doNameRequest(searchstr);
-}
-
-function doNameRequest(searchStr) {
-
-    // format the query to be sent to the tnrs
-//  var jsonquerystring = '{"queryString":"' + decodeURIComponent(searchStr).replace("+", " ") + '"}';
-    var jsonquerystring = '{"queryString":"' + decodeURIComponent(searchStr).replace(/\++/g, " ") + '"}';
->>>>>>> 1e391d4e01ce0f3c2e33ac563362e57c5ca9817b
     var method = "POST";
     var xobj = new XMLHttpRequest();
 
@@ -115,11 +92,7 @@ function makeNamesForm(respData) {
 
                 var matchForm = $("<form method='LINK' action='browser.html'></form>").append("<input type='hidden' name='domsource' value='ottol' />").append("<input type='hidden' name='nodeid' value='"+thisMatch.matchedNodeId+"' />").append("<input type='submit' value='View'>");
                 
-<<<<<<< HEAD
                 thisMatchResult.append(matchForm).append("<span class='matchname'>"+thisMatch.matchedName+"</span>").append("<span>"+thisMatch.nomenCode+"</span>").append("<span>"+roundDecimal(thisMatch.score,3)+"</span>");
-=======
-                thisMatchResult.append(matchForm).append("<span class='matchname'>"+thisMatch.matchedNodeName+"</span>").append("<span>"+thisMatch.nomenCode+"</span>").append("<span>"+roundDecimal(thisMatch.score,3)+"</span>");
->>>>>>> 1e391d4e01ce0f3c2e33ac563362e57c5ca9817b
 
                 $(nameResult).append(thisMatchResult);
                 
