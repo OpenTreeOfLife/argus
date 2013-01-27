@@ -84,7 +84,7 @@ function makeNamesForm(respData) {
 
                 var matchForm = $("<form method='LINK' action='browser.html'></form>").append("<input type='hidden' name='domsource' value='ottol' />").append("<input type='hidden' name='nodeid' value='"+thisMatch.matchedNodeId+"' />").append("<input type='submit' value='View'>");
                 
-                thisMatchResult.append(matchForm).append("<span class='matchname'>"+thisMatch.matchedNodeName+"</span>").append("<span>"+thisMatch.nomenCode+"</span>").append("<span>"+roundDecimal(thisMatch.score,3)+"</span>");
+                thisMatchResult.append(matchForm).append("<span class='matchname'>"+thisMatch.matchedNodeName+"</span>").append("<span>"+thisMatch.parentName+"</span>").append("<span>"+thisMatch.nomenCode+"</span>").append("<span>"+roundDecimal(thisMatch.score,3)+"</span>");
 
                 $(nameResult).append(thisMatchResult);
                 
