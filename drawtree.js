@@ -558,7 +558,7 @@ function loadData(argsobj) {
     xobjPost.send(jsonquerystr);
 
     var jsonrespstr = xobjPost.responseText;
-//    alert(jsonrespstr);
+    alert(jsonrespstr);
     var treedata = JSON.parse(eval(xobjPost.responseText));
 
     // calculate view-specific geometry parameters
