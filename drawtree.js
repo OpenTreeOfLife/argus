@@ -553,26 +553,32 @@ function loadData(argsobj) {
      * XMLHttpRequest.SetRequestHeader() before we issue the send. */
     xobjPost.setRequestHeader("Content-Type","application/json");
    
+    xobjPost.onload =
+      function() {
+
+	var jsonrespstr = xobjPost.responseText;
+        //    alert(jsonrespstr);
+	var treedata = JSON.parse(eval(xobjPost.responseText));
+
+	// calculate view-specific geometry parameters
+	var pheight = ((2*r) + ynodemargin) * (treedata[0].nleaves) + (nubdistscalar * r) + (40*nodeheight);
+	var pwidth = nodewidth*(treedata[0].maxnodedepth+1) + 1.5*tipoffset + xlabelmargin;
+	xoffset = pwidth - nodewidth - tipoffset;
+
+	var domsource = treedata[1].domsource;
+	paper = Raphael(10, 10, 10, 10);
+	paper.setSize(pwidth, pheight);
+	var sourcelabel = paper.text(10, 10, "source: " + domsource).attr({"font-size": String(fontscalar*r) + "px", "text-anchor": "start"});
+
+	// draw the tree
+	drawNode(treedata[0],domsource);
+
+	// draw the cylces
+	drawCycles(treedata[0].children[0].nodeid);
+      };
+
+    // TBD: maybe add an 'onerror' handler too
+
     jsonquerystr = jsonquerystr == "" ? undefined : jsonquerystr;
     xobjPost.send(jsonquerystr);
-
-    var jsonrespstr = xobjPost.responseText;
-//    alert(jsonrespstr);
-    var treedata = JSON.parse(eval(xobjPost.responseText));
-
-    // calculate view-specific geometry parameters
-    var pheight = ((2*r) + ynodemargin) * (treedata[0].nleaves) + (nubdistscalar * r) + (40*nodeheight);
-    var pwidth = nodewidth*(treedata[0].maxnodedepth+1) + 1.5*tipoffset + xlabelmargin;
-    xoffset = pwidth - nodewidth - tipoffset;
-    
-    var domsource = treedata[1].domsource;
-    paper = Raphael(10, 10, 10, 10);
-    paper.setSize(pwidth, pheight);
-    var sourcelabel = paper.text(10, 10, "source: " + domsource).attr({"font-size": String(fontscalar*r) + "px", "text-anchor": "start"});
-
-    // draw the tree
-    drawNode(treedata[0],domsource);
-
-    // draw the cylces
-    drawCycles(treedata[0].children[0].nodeid);
 }
