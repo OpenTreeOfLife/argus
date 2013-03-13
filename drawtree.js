@@ -199,7 +199,7 @@ function drawNode(node, domsource, isfirst) {
              * object. It is not clear why the first paper object is not overwritten by later
              * assignments to that variable name, but the code seems to work alright as is. */
             paper.remove();
-            loadData(loadargs);};
+            loadData(loadargs, paper.canvas.parentNode);};
     }
 
     circle.click(getClickHandlerNode());
@@ -339,7 +339,7 @@ function drawCycles(focalnode) {
                                         "method": "POST",
                                         "jsonquerystring": buildJSONQuery(jsonargs)};
                         paper.remove();
-                        loadData(loadargs);};
+                        loadData(loadargs, paper.canvas.parentNode);};
                 }
                 
                 // create closure so we can affect properties when we hover in/out
@@ -410,7 +410,7 @@ function drawCycles(focalnode) {
                                         "jsonquerystring": jsonquerystr};
 //                        alert(jsonquerystr);
                         paper.remove();
-                        loadData(loadargs);};
+                        loadData(loadargs, paper.canvas.parentNode);};
                 }
 
                 // links are drawn in a vertical sequence within the infobox container
@@ -461,6 +461,7 @@ function drawCycles(focalnode) {
     }
 }
 
+var paperContainer; // DOM element that is the parent of the paper element
 var paper; // raphael canvas object
 var curleaf; // absolute leaf counter used in geometry
 var nodeshash;
@@ -501,10 +502,27 @@ var altpcolor = "#c69";
 var altplinkcolor = "#900";
 
 // call this function on first page load to get initial tree
-function setup() {
+//  @param `container` is passed to loadData as the DOM node that is the parent of the canvas
+function setupAtNode(nodeid, domsource, container) {
+    if (isBlank(domsource))
+        domsource = "ottol";
+
+    // call webservice to display graph for indicated node id
+    if (!isBlank(nodeid)) {
+        var jsonquerystring = buildJSONQuery({"domsource": domsource});
+        var url = buildUrl(nodeid);
+        var loadargs = {"url": url, "method": "POST", "jsonquerystring": jsonquerystring};
+        loadData(loadargs, container);
+    }
+}
+
+// call this function on first page load to get initial tree based on
+//  the query portion of the URL (the location.search string) 
+//  @param `container` is passed to loadData as the DOM node that is the parent of the canvas
+function setup(container) {
 
     // extract variables from url string
-    var searchstr = "";
+
     var domsource = "";
     if (location.search != "") {
         var tokstr = location.search.substr(1).split("?");
@@ -519,20 +537,14 @@ function setup() {
         }
     }
 
-    if (isBlank(domsource))
-        domsource = "ottol";
-
-    // call webservice to display graph for indicated node id
-    if (!isBlank(nodeid)) {
-        var jsonquerystring = buildJSONQuery({"domsource": domsource});
-        var url = buildUrl(nodeid);
-        var loadargs = {"url": url, "method": "POST", "jsonquerystring": jsonquerystring};
-        loadData(loadargs);
-    }
+    setupAtNode(nodeid, domsource, container);
 }
 
-// this function queries the db and draws the resulting tree
-function loadData(argsobj) {
+// this function queries the db and draws the resulting tree.
+// 
+// @param The `container` arg should be the DOM node that should serve as
+//      as the parent element for the canvas
+function loadData(argsobj, container) {
     
     /* accepts three named arguments:
      *    url               the address to which the HTTP request is sent
@@ -566,7 +578,12 @@ function loadData(argsobj) {
 	xoffset = pwidth - nodewidth - tipoffset;
 
 	var domsource = treedata[1].domsource;
-	paper = Raphael(10, 10, 10, 10);
+    if (typeof container === 'undefined') {
+        paper = Raphael(10, 10, 10, 10);
+    }
+    else {
+        paper = Raphael(container, 10, 10);
+    }
 	paper.setSize(pwidth, pheight);
 	var sourcelabel = paper.text(10, 10, "source: " + domsource).attr({"font-size": String(fontscalar*r) + "px", "text-anchor": "start"});
 
