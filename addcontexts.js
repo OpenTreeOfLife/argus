@@ -1,5 +1,5 @@
 //baseurl = "http://localhost:7474/";
-baseurl = "http://opentree-dev.bio.ku.edu:7474/";
+baseurl = "http://opentree-dev.bio.ku.edu:7476/";
 
 function addcontexts() {
 
